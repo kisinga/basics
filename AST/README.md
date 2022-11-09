@@ -1,0 +1,2 @@
+AST, short for abstract syntax trees are an important concept of software engineering.  
+Normally, they sit in between a compiler and the code that we write, and are used to represent the code in  tree structure, allowing the compiler and other tools to understand the structure of the code without running the code. This is known as static analysis, and it has many applications including (but not limited to) linting and code transformations

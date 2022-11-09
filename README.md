@@ -1,4 +1,2 @@
-# basics
-This repo contains some basics of programming: data structures and algorithms.  
-It contains my journey refreshing the basics and implementing everything from scratch.  
-I have referenced most of the material from blogs and video tutorials, and links are provided in the respective README files.  
+This repo is a documentation to some of the important software engineering concepts I've learnt (Or re-learnt).  
+Links to the relevant learning material are provided in the respective readmes.

@@ -1,6 +1,4 @@
-package main
-
-import "fmt"
+package heaps
 
 type MaxHeap struct {
 	data []int
@@ -66,13 +64,4 @@ func (h *MaxHeap) Extract(val int) int {
 	// heapify downwards
 	h.heapifyDown(0)
 	return value
-}
-
-func main() {
-	h := []int{10, 20, 30, 40, 50, 60, 70, 80}
-	m := &MaxHeap{}
-	for _, v := range h {
-		m.Insert(v)
-	}
-	fmt.Println(m)
 }
