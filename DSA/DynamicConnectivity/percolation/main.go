@@ -4,44 +4,58 @@ import (
 	"math/rand"
 
 	"github.com/kisinga/basics/DSA/DynamicConnectivity/percolation/models"
+	"github.com/kisinga/basics/DSA/DynamicConnectivity/percolation/quickfind"
+	"github.com/kisinga/basics/DSA/DynamicConnectivity/percolation/quickunion"
 )
 
-func New(n int) *models.Data {
+func New(n int) (qu models.Percolation, qf models.Percolation) {
 
-	data := models.Data{}
+	qf = quickfind.New(n)
+	qu = quickunion.New(n)
 
 	// connect the first row
 	for i := range n {
-		data.Connect(models.Node{Row: 0, Col: i}, models.VirtualRootTop)
+		qu.Connect(models.Node{Row: 0, Col: i}, models.VirtualRootTop)
+		qu.Connect(models.Node{Row: 0, Col: i}, models.VirtualRootTop)
 	}
 
 	// connect the last row to the virtual bottom root
 	for i := range n {
-		data.Connect(models.Node{Row: n - 1, Col: i}, models.VirtualRootBottom)
+		qu.Connect(models.Node{Row: n - 1, Col: i}, models.VirtualRootBottom)
+		qf.Connect(models.Node{Row: n - 1, Col: i}, models.VirtualRootBottom)
 	}
 
 	// initialize the rest of the grid
 	for i := 1; i < n; i++ {
 		for j := 0; j <= n; j++ {
-			data.AddNode(i, j)
+			qu.AddNode(models.Node{Row: i, Col: j})
+			qf.AddNode(models.Node{Row: i, Col: j})
 		}
 	}
 
-	return &data
+	return qu, qf
 
 }
 
 func main() {
 
 	gridSize := 10
-	var data models.Percolation = New(gridSize)
-	data.Open(1, 1)
+	qu, qf := New(gridSize)
+
+	qu.Open(models.Node{Row: 0, Col: 0})
+	qf.Open(models.Node{Row: 0, Col: 0})
 
 	count := 0
 	// open random sites until the system percolates
-	for !data.Percolates() {
+	for !qu.Percolates() {
 		// create a random row and column restricted to the size of the grid
-		data.Open(rand.Intn(gridSize), rand.Intn(gridSize))
+		qu.Open(models.Node{Row: rand.Intn(gridSize), Col: rand.Intn(gridSize)})
+		count++
+	}
+
+	for !qf.Percolates() {
+		// create a random row and column restricted to the size of the grid
+		qf.Open(models.Node{Row: rand.Intn(gridSize), Col: rand.Intn(gridSize)})
 		count++
 	}
 
