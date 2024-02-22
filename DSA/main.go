@@ -37,6 +37,6 @@ func timeTrack(start time.Time, name string) {
 func main() {
 	defer timeTrack(time.Now(), "main")
 
-	records := readCsvFile("./values.csv")
+	_ = readCsvFile("./values.csv")
 
 }
