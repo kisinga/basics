@@ -3,10 +3,25 @@ package quickunion
 import "github.com/kisinga/basics/DSA/DynamicConnectivity/percolation/models"
 
 type QuickUnion struct {
+	// the grid
+	grid models.Grid
 }
 
-func New(size int) *QuickUnion {
-	return &QuickUnion{}
+func New(size int) models.Percolation {
+	grid := models.EmptyGrid(size)
+
+	// connect the first col to virtual top
+
+	for i := range size {
+		grid[0][i] = models.VirtualRootTop
+		grid[size-1][i] = models.VirtualRootBottom
+	}
+
+	// connect the last row to virtual bottom
+
+	return &QuickUnion{
+		grid: grid,
+	}
 }
 
 func init() {
@@ -53,22 +68,57 @@ func (qu *QuickUnion) Union(nodeA models.Node, nodeB models.Node) {
 	// improvedQuickUnion.arr[rootP] = rootQ
 }
 
-func (qu *QuickUnion) AddNode(node models.Node) {
-	// add a node to the grid
-}
-
 func (qu *QuickUnion) Open(node models.Node) {
-	// open a node
+	// opening a node means connecting it to the nearest open node
+	qu.grid[node.Row][node.Col].IsOpen = true
+
+	if node.Row == 0 || node.Row == len(qu.grid)-1 {
+		return
+	}
+
+	// connect to top node
+	if qu.IsOpen(models.Node{Row: node.Row - 1, Col: node.Col}) {
+		qu.Connect(node, models.Node{Row: node.Row - 1, Col: node.Col})
+	}
+
+	// connect to bottom node
+	if qu.IsOpen(models.Node{Row: node.Row + 1, Col: node.Col}) {
+		qu.Connect(node, models.Node{Row: node.Row + 1, Col: node.Col})
+	}
+
+	// connect to left node
+	if qu.IsOpen(models.Node{Row: node.Row, Col: node.Col - 1}) {
+		qu.Connect(node, models.Node{Row: node.Row, Col: node.Col - 1})
+	}
+
+	// connect to right node
+	if qu.IsOpen(models.Node{Row: node.Row, Col: node.Col + 1}) {
+		qu.Connect(node, models.Node{Row: node.Row, Col: node.Col + 1})
+	}
 }
 
 func (qu *QuickUnion) IsOpen(node models.Node) bool {
 	// check if a node is open
-	return true
+	return node.IsOpen
 }
 
 func (qu *QuickUnion) IsFull(node models.Node) bool {
 	// check if a node is full
-	return true
+	if qu.IsOpen(node) {
+		// check if the node is connected to the virtual top root
+
+		// if the node is in the first row, it is connected to the virtual top root
+		if node.Row == 0 {
+			return true
+		}
+
+		return true
+
+		// if the node is in the middle, check if it is connected to the virtual top root
+
+	} else {
+		return false
+	}
 }
 
 func (qu *QuickUnion) NumberOfOpenSites() int {

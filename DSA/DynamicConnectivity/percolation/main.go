@@ -25,14 +25,6 @@ func New(n int) (qu models.Percolation, qf models.Percolation) {
 		qf.Connect(models.Node{Row: n - 1, Col: i}, models.VirtualRootBottom)
 	}
 
-	// initialize the rest of the grid
-	for i := 1; i < n; i++ {
-		for j := 0; j <= n; j++ {
-			qu.AddNode(models.Node{Row: i, Col: j})
-			qf.AddNode(models.Node{Row: i, Col: j})
-		}
-	}
-
 	return qu, qf
 
 }

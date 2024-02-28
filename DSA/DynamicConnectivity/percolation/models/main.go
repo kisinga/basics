@@ -1,8 +1,26 @@
 package models
 
 type Node struct {
-	Row int
-	Col int
+	Row    int
+	Col    int
+	IsOpen bool
+}
+
+type Grid [][]Node
+
+func EmptyGrid(size int) Grid {
+	grid := make([][]Node, size)
+	for i := range size {
+		grid[i] = make([]Node, size)
+		for j := range size {
+			grid[i][j] = Node{
+				Row:    i,
+				Col:    j,
+				IsOpen: false,
+			}
+		}
+	}
+	return grid
 }
 
 var VirtualRootTop = Node{
@@ -31,8 +49,6 @@ type Percolation interface {
 
 	// does the system percolate?
 	Percolates() bool
-
-	AddNode(nd Node)
 
 	Connect(node Node, rootNode Node)
 }
