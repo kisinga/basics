@@ -23,7 +23,8 @@ func EmptyData(size int) *Data {
 	}
 	// we add 2 rows, one for vTop and the other for vBottom
 	grid := make([][]Node, size+2)
-	for i := range size {
+
+	for i := range size + 2 {
 		grid[i] = make([]Node, size)
 		for j := range size {
 			grid[i][j] = Node{
