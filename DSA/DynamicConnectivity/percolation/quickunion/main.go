@@ -4,23 +4,14 @@ import "github.com/kisinga/basics/DSA/DynamicConnectivity/percolation/models"
 
 type QuickUnion struct {
 	// the grid
-	grid models.Grid
+	data models.Data
 }
 
 func New(size int) models.Percolation {
-	grid := models.EmptyGrid(size)
-
-	// connect the first col to virtual top
-
-	for i := range size {
-		grid[0][i] = models.VirtualRootTop
-		grid[size-1][i] = models.VirtualRootBottom
-	}
-
-	// connect the last row to virtual bottom
+	data := models.EmptyData(size)
 
 	return &QuickUnion{
-		grid: grid,
+		data: *data,
 	}
 }
 
@@ -70,9 +61,9 @@ func (qu *QuickUnion) Union(nodeA models.Node, nodeB models.Node) {
 
 func (qu *QuickUnion) Open(node models.Node) {
 	// opening a node means connecting it to the nearest open node
-	qu.grid[node.Row][node.Col].IsOpen = true
+	qu.data.Grid[node.Row][node.Col].IsOpen = true
 
-	if node.Row == 0 || node.Row == len(qu.grid)-1 {
+	if node.Row == 0 || node.Row == qu.data.RealSize-1 {
 		return
 	}
 

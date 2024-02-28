@@ -5,38 +5,28 @@ import (
 )
 
 type QuickFind struct {
-	// the grid, where the arrangement is row, col
-	grid models.Grid
+	// the data, where the arrangement is row, col
+	data models.Data
 }
 
 func New(size int) models.Percolation {
-	grid := models.EmptyGrid(size)
-
-	// connect the first col to virtual top
-
-	for i := range size {
-		grid[0][i] = models.VirtualRootTop
-		grid[size-1][i] = models.VirtualRootBottom
-	}
-
-	// connect the last row to virtual bottom
-
+	data := models.EmptyData(size)
 	return &QuickFind{
-		grid: grid,
+		data: *data,
 	}
 }
 
 func (qf *QuickFind) Connected(nodeA models.Node, nodeB models.Node) bool {
 	// return array[p] == array[q]
 	// two nodes are connected if they have the same root
-	return qf.grid[nodeA.Row][nodeA.Col] == qf.grid[nodeA.Row][nodeA.Col]
+	return qf.data.Grid[nodeA.Row][nodeA.Col] == qf.data.Grid[nodeA.Row][nodeA.Col]
 }
 
 func (qf *QuickFind) Open(node models.Node) {
 	//opening a node means that it will be connected to all the neighbours that are also open
-	qf.grid[node.Row][node.Col].IsOpen = true
+	qf.data.Grid[node.Row][node.Col].IsOpen = true
 
-	if node.Row == 0 || node.Row == len(qf.grid)-1 {
+	if node.Row == 0 || node.Row == qf.data.RealSize-1 {
 		return
 	}
 
@@ -64,7 +54,7 @@ func (qf *QuickFind) Open(node models.Node) {
 
 func (qf *QuickFind) IsOpen(node models.Node) bool {
 	// a node is open if it's not connected to itself
-	return qf.grid[node.Row][node.Col].IsOpen
+	return qf.data.Grid[node.Row][node.Col].IsOpen
 }
 
 func (qf *QuickFind) IsFull(node models.Node) bool {
@@ -79,21 +69,21 @@ func (qf *QuickFind) NumberOfOpenSites() int {
 
 func (qf *QuickFind) Percolates() bool {
 	// check if the system percolates
-	return true
+	return qf.data.Grid[qf.data.VTopPos][0] == qf.data.Grid[qf.data.VBottomPos][0]
 }
 
 func (qf *QuickFind) Connect(nodeA models.Node, nodeB models.Node) {
 	// connect the two nodes
 
-	rootA := qf.grid[nodeA.Row][nodeA.Col]
-	rootB := qf.grid[nodeB.Row][nodeB.Col]
+	rootA := qf.data.Grid[nodeA.Row][nodeA.Col]
+	rootB := qf.data.Grid[nodeB.Row][nodeB.Col]
 
 	if rootA != rootB {
-		for i := range len(qf.grid) {
+		for i := range qf.data.RealSize {
 			// for every row, check if any element has a parent equal to the rootA
-			for j := range len(qf.grid) {
-				if qf.grid[i][j] == rootA {
-					qf.grid[i][j] = rootB
+			for j := range qf.data.RealSize {
+				if qf.data.Grid[i][j] == rootA {
+					qf.data.Grid[i][j] = rootB
 				}
 			}
 		}

@@ -6,10 +6,23 @@ type Node struct {
 	IsOpen bool
 }
 
+type Data struct {
+	Grid
+	RealSize   int
+	VTopPos    int
+	VBottomPos int
+}
+
 type Grid [][]Node
 
-func EmptyGrid(size int) Grid {
-	grid := make([][]Node, size)
+func EmptyData(size int) *Data {
+	model := &Data{
+		RealSize:   size,
+		VTopPos:    size,
+		VBottomPos: size + 1,
+	}
+	// we add 2 rows, one for vTop and the other for vBottom
+	grid := make([][]Node, size+2)
 	for i := range size {
 		grid[i] = make([]Node, size)
 		for j := range size {
@@ -20,17 +33,16 @@ func EmptyGrid(size int) Grid {
 			}
 		}
 	}
-	return grid
-}
 
-var VirtualRootTop = Node{
-	Row: -1,
-	Col: -1,
-}
+	// connect the first row to the vTop and the last row to the VBottom
+	for i := 0; i < size; i++ {
+		grid[0][i] = grid[model.VTopPos][0]
+		grid[size-1][i] = grid[model.VBottomPos][0]
+	}
 
-var VirtualRootBottom = Node{
-	Row: -2,
-	Col: -2,
+	model.Grid = grid
+
+	return model
 }
 
 type Percolation interface {
