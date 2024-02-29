@@ -19,11 +19,8 @@ func New(n int) (qu models.Percolation, qf models.Percolation) {
 
 func main() {
 
-	gridSize := 15
-	qu, qf := New(gridSize)
-
-	qu.Open(models.Node{Row: 0, Col: 0})
-	qf.Open(models.Node{Row: 0, Col: 0})
+	gridSize := 5
+	_, qf := New(gridSize)
 
 	count := 0
 	// open random sites until the system percolates
@@ -35,9 +32,11 @@ func main() {
 
 	for !qf.Percolates() {
 		// create a random row and column restricted to the size of the grid
-		qf.Open(models.Node{Row: rand.Intn(gridSize), Col: rand.Intn(gridSize)})
+		qf.Open(rand.Intn(gridSize), rand.Intn(gridSize))
 		count++
 	}
+
+	println(count)
 
 	// print the number of open sites
 

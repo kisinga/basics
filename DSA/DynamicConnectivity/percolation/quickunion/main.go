@@ -41,75 +41,18 @@ func init() {
 // 	}
 // }
 
-func (qu *QuickUnion) Connected(nodeA models.Node, nodeB models.Node) bool {
-	// return imp.root(p) == imp.root(q)
-	return true
+func (qu *QuickUnion) Open(Row, Col int) {
+
 }
 
-func (qu *QuickUnion) Union(nodeA models.Node, nodeB models.Node) {
-	// rootP := imp.root(p)
-	// rootQ := imp.root(q)
-	// if improvedQuickUnion.sizearr[rootP] < improvedQuickUnion.sizearr[rootQ] {
-	// 	improvedQuickUnion.arr[rootP] = rootQ
-	// 	improvedQuickUnion.sizearr[rootQ] += improvedQuickUnion.sizearr[rootP]
-	// } else {
-	// 	improvedQuickUnion.arr[rootQ] = rootP
-	// 	improvedQuickUnion.sizearr[rootP] += improvedQuickUnion.sizearr[rootQ]
-	// }
-	// improvedQuickUnion.arr[rootP] = rootQ
-}
-
-func (qu *QuickUnion) Open(node models.Node) {
-	// opening a node means connecting it to the nearest open node
-	qu.data.Grid[node.Row][node.Col].IsOpen = true
-
-	if node.Row == 0 || node.Row == qu.data.RealSize-1 {
-		return
-	}
-
-	// connect to top node
-	if qu.IsOpen(models.Node{Row: node.Row - 1, Col: node.Col}) {
-		qu.Connect(node, models.Node{Row: node.Row - 1, Col: node.Col})
-	}
-
-	// connect to bottom node
-	if qu.IsOpen(models.Node{Row: node.Row + 1, Col: node.Col}) {
-		qu.Connect(node, models.Node{Row: node.Row + 1, Col: node.Col})
-	}
-
-	// connect to left node
-	if qu.IsOpen(models.Node{Row: node.Row, Col: node.Col - 1}) {
-		qu.Connect(node, models.Node{Row: node.Row, Col: node.Col - 1})
-	}
-
-	// connect to right node
-	if qu.IsOpen(models.Node{Row: node.Row, Col: node.Col + 1}) {
-		qu.Connect(node, models.Node{Row: node.Row, Col: node.Col + 1})
-	}
-}
-
-func (qu *QuickUnion) IsOpen(node models.Node) bool {
+func (qu *QuickUnion) IsOpen(Row, Col int) bool {
 	// check if a node is open
-	return node.IsOpen
+	return qu.data.Grid[Row][Col].IsOpen
 }
 
-func (qu *QuickUnion) IsFull(node models.Node) bool {
-	// check if a node is full
-	if qu.IsOpen(node) {
-		// check if the node is connected to the virtual top root
+func (qu *QuickUnion) IsFull(Row, Col int) bool {
 
-		// if the node is in the first row, it is connected to the virtual top root
-		if node.Row == 0 {
-			return true
-		}
-
-		return true
-
-		// if the node is in the middle, check if it is connected to the virtual top root
-
-	} else {
-		return false
-	}
+	return true
 }
 
 func (qu *QuickUnion) NumberOfOpenSites() int {
@@ -122,6 +65,6 @@ func (qu *QuickUnion) Percolates() bool {
 	return true
 }
 
-func (qu *QuickUnion) Connect(node models.Node, rootNode models.Node) {
+func (qu *QuickUnion) Connect(Row1, Col1, Row, Col int) {
 	// connect a node to the root node
 }

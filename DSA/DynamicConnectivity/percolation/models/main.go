@@ -24,7 +24,7 @@ func EmptyData(size int) *Data {
 	// we add 2 rows, one for vTop and the other for vBottom
 	grid := make([][]Node, size+2)
 
-	for i := range size + 2 {
+	for i := range size {
 		grid[i] = make([]Node, size)
 		for j := range size {
 			grid[i][j] = Node{
@@ -33,6 +33,20 @@ func EmptyData(size int) *Data {
 				IsOpen: false,
 			}
 		}
+	}
+
+	grid[model.VTopPos] = make([]Node, 1)
+	grid[model.VBottomPos] = make([]Node, 1)
+	// create the vtop and vbottom and connect each to itself
+	grid[model.VTopPos][0] = Node{
+		Row:    model.VTopPos,
+		Col:    0,
+		IsOpen: false,
+	}
+	grid[model.VBottomPos][0] = Node{
+		Row:    model.VBottomPos,
+		Col:    0,
+		IsOpen: false,
 	}
 
 	// connect the first row to the vTop and the last row to the VBottom
@@ -49,13 +63,13 @@ func EmptyData(size int) *Data {
 type Percolation interface {
 
 	// opens the site (row, col) if it is not open already
-	Open(node Node)
+	Open(Row, Col int)
 
 	// is the site (row, col) open?
-	IsOpen(node Node) bool
+	IsOpen(Row, Col int) bool
 
 	// is the site (row, col) full?
-	IsFull(node Node) bool
+	IsFull(Row, Col int) bool
 
 	// returns the number of open sites
 	NumberOfOpenSites() int
@@ -63,7 +77,7 @@ type Percolation interface {
 	// does the system percolate?
 	Percolates() bool
 
-	Connect(node Node, rootNode Node)
+	Connect(Row1, Col1, Row, Col int)
 }
 
 type PercolationStats interface {
