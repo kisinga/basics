@@ -65,6 +65,6 @@ func (qu *QuickUnion) Percolates() bool {
 	return true
 }
 
-func (qu *QuickUnion) Connect(Row1, Col1, Row, Col int) {
+func (qu *QuickUnion) Connect(RowA, ColA, RowB, ColB int) {
 	// connect a node to the root node
 }

@@ -77,7 +77,7 @@ type Percolation interface {
 	// does the system percolate?
 	Percolates() bool
 
-	Connect(Row1, Col1, Row, Col int)
+	Connect(RowA, ColA, RowB, ColB int)
 }
 
 type PercolationStats interface {
