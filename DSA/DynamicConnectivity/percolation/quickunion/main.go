@@ -4,15 +4,18 @@ import "github.com/kisinga/basics/DSA/DynamicConnectivity/percolation/models"
 
 type QuickUnion struct {
 	// the grid
-	data models.Data
+	models.Grid
 }
 
-func New(size int) models.Percolation {
-	data := models.EmptyData(size)
+func New(size int) (models.Percolation, error) {
+	data, err := models.EmptyData(size)
+	if err != nil {
+		return nil, err
+	}
 
 	return &QuickUnion{
-		data: *data,
-	}
+		data,
+	}, nil
 }
 
 func init() {
@@ -41,13 +44,29 @@ func init() {
 // 	}
 // }
 
-func (qu *QuickUnion) Open(Row, Col int) {
+func (qu *QuickUnion) Open(Row, Col int) error {
+	return nil
+}
 
+func (qf *QuickUnion) FindRoot(row, col int) models.Node {
+	// Starting at the given site
+	current := qf.Grid[row][col]
+
+	// Follow the parent nodes until finding a root
+	// A root node is indicated by it pointing to itself
+	// Assuming each Node knows its parent, adjust accordingly if your structure is different
+	for !(current.Row == row && current.Col == col) {
+		row = current.Row
+		col = current.Col
+		current = qf.Grid[row][col]
+	}
+
+	return current
 }
 
 func (qu *QuickUnion) IsOpen(Row, Col int) bool {
 	// check if a node is open
-	return qu.data.Grid[Row][Col].IsOpen
+	return qu.Grid[Row][Col].IsOpen
 }
 
 func (qu *QuickUnion) IsFull(Row, Col int) bool {

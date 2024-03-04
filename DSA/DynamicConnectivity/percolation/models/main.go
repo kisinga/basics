@@ -1,5 +1,7 @@
 package models
 
+import "errors"
+
 type Node struct {
 	Row    int
 	Col    int
@@ -8,12 +10,14 @@ type Node struct {
 
 type Grid [][]Node
 
-func EmptyData(size int) Grid {
-
+func EmptyData(size int) (Grid, error) {
+	if size <= 0 {
+		return nil, errors.New("IllegalArgumentException")
+	}
 	// we add 2 rows, one for vTop and the other for vBottom
 	grid := make([][]Node, size+2)
 
-	for i := range size {
+	for i := 1; i <= size; i++ {
 		grid[i] = make([]Node, size)
 		for j := range size {
 			grid[i][j] = Node{
@@ -23,31 +27,43 @@ func EmptyData(size int) Grid {
 			}
 		}
 	}
+
 	// create the vtop and vbottom and connect each to itself
+	grid[0] = make([]Node, 1)
 	grid[0][0] = Node{
 		Row:    0,
 		Col:    0,
-		IsOpen: false,
+		IsOpen: true,
 	}
+
+	grid[size+1] = make([]Node, 1)
 	grid[size+1][0] = Node{
-		Row:    0,
-		Col:    0,
-		IsOpen: false,
+		Row:    size + 1,
+		Col:    size + 1,
+		IsOpen: true,
 	}
 
 	// connect the first row to the vTop and the last row to the VBottom
-	for i := 0; i < size; i++ {
-		grid[0][i] = grid[0][0]
-		grid[size-1][i] = grid[size+1][0]
+	for i := range size {
+		grid[1][i] = Node{
+			Col:    0,
+			Row:    0,
+			IsOpen: false,
+		}
+		grid[size][i] = Node{
+			Row:    size + 1,
+			Col:    size + 1,
+			IsOpen: false,
+		}
 	}
 
-	return grid
+	return grid, nil
 }
 
 type Percolation interface {
 
 	// opens the site (row, col) if it is not open already
-	Open(Row, Col int)
+	Open(Row, Col int) error
 
 	// is the site (row, col) open?
 	IsOpen(Row, Col int) bool
