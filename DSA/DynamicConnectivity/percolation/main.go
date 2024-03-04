@@ -10,6 +10,11 @@ import (
 	"github.com/kisinga/basics/DSA/DynamicConnectivity/percolation/quickunion"
 )
 
+type Totals struct {
+	Sites     float64
+	OpenSites float64
+}
+
 func New(n int) (models.Percolation, models.Percolation, error) {
 
 	qf, err := quickfind.New(n)
@@ -24,8 +29,13 @@ func New(n int) (models.Percolation, models.Percolation, error) {
 
 }
 
-func calculateMany(count int) float64 {
-	probabilityResults := make(chan float64, count)
+func calculateMany(count int) Totals {
+	totals := Totals{}
+	type results struct {
+		gridSize  int
+		openSites int
+	}
+	gridResults := make(chan results, count)
 	var wg sync.WaitGroup
 	for range count {
 		wg.Add(1)
@@ -42,34 +52,34 @@ func calculateMany(count int) float64 {
 				// the first and last rows are vtop and vbottom
 				_ = qf.Open(rand.Intn(gridSize)+1, rand.Intn(gridSize))
 			}
-			probability := 0.0
-			openSites := qf.NumberOfOpenSites()
-			probability = float64(openSites) / float64(gridSize*gridSize)
-			probabilityResults <- probability
+			gridResults <- results{
+				gridSize:  gridSize,
+				openSites: qf.NumberOfOpenSites(),
+			}
 		}()
 
 	}
 	go func() {
 		wg.Wait()
-		close(probabilityResults)
+		close(gridResults)
 	}()
 
-	totals := 0.0
 	resultCount := 0
 	// in the case scenario that there are errors in the goroutines, dont rely on the buffer size as the source of truth
-	for val := range probabilityResults {
-		totals += val
+	for val := range gridResults {
+		totals.OpenSites += float64(val.openSites)
+		totals.Sites += float64(val.gridSize * val.gridSize)
 		resultCount++
 	}
 	if resultCount != count {
 		fmt.Println("there was an error creating some grids")
 	}
-	return totals / float64(resultCount)
+	return totals
 }
 
 func main() {
 
-	sampleSize := 200
+	sampleSize := 300
 
 	// open random sites until the system percolates
 	// for !qu.Percolates() {
@@ -85,8 +95,9 @@ func main() {
 	// probability := 0.0
 	// openSites := qf.NumberOfOpenSites()
 	// probability = float64(openSites) / float64(gridSize)
-	probability := calculateMany(sampleSize)
-	println(probability)
+	totals := calculateMany(sampleSize)
+	probability := totals.OpenSites / totals.Sites
+	fmt.Println(probability)
 	// print the number of open sites
 
 }
